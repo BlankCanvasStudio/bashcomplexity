@@ -4,28 +4,28 @@ import bashlex, bashparse, bashunroll, bashtemplate, copy
 def calculate_command_weight():
     return 1
 
-def calcualte_pipeline_weight():
+def calculate_pipeline_weight():
     return 1
 
-def calcualte_compound_weight():
+def calculate_compound_weight():
     return 1
 
-def calcualte_substitution_weight():
+def calculate_substitution_weight():
     return 1
 
-def calcualte_for_weight(score):
+def calculate_for_weight(score):
     return score
 
-def calcualte_if_weight(score):
+def calculate_if_weight(score):
     return score + 1
 
-def calcualte_function_weight(score):
+def calculate_function_weight(score):
     return score - 1
 
-def calcualte_parts_weight(score):
+def calculate_parts_weight(score):
     return score
 
-def calcualte_list_weight(score):
+def calculate_list_weight(score):
     return score
 
 def calculate_command_attr_weight(score):
@@ -43,8 +43,8 @@ def calculate_single_node_complexity(node):
     score = 0
     if type(node) is not bashlex.ast.node: return 0
     if node.kind == 'command': score += calculate_command_weight()
-    if node.kind == 'pipeline': score += calcualte_pipeline_weight()
-    if node.kind == 'compound': score += calcualte_compound_weight()
+    if node.kind == 'pipeline': score += calculate_pipeline_weight()
+    if node.kind == 'compound': score += calculate_compound_weight()
     if node.kind == 'commandsubstitution': score += 1
     if node.kind == 'for':
         for_score = 0
@@ -54,7 +54,7 @@ def calculate_single_node_complexity(node):
     if node.kind == 'if':
         if_score = 0
         for part in node.parts[3:]: if_score += calculate_single_node_complexity(part)
-        score += calcualte_if_weight(if_score)
+        score += calculate_if_weight(if_score)
     if node.kind == 'function':
         command_section = bashparse.return_nodes_of_type(node, 'compound')  # function has actual commands in their compound node
         function_score = 0
@@ -62,11 +62,11 @@ def calculate_single_node_complexity(node):
     if hasattr(node, 'parts'):
         parts_score = 0
         for part in node.parts: parts_score += calculate_single_node_complexity(part)
-        score += calcualte_parts_weight(parts_score)
+        score += calculate_parts_weight(parts_score)
     if hasattr(node, 'list'):
         list_score = 0
         for part in node.list: list_score += calculate_single_node_complexity(part)
-        score = calcualte_list_weight(list_score)
+        score = calculate_list_weight(list_score)
     if hasattr(node, 'command'):
         command_attr_score = 0 
         command_attr_score += calculate_single_node_complexity(node.command)
